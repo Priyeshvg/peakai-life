@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PeakAI | Robotics Data Infrastructure</title>
+    <title>PeakAI | Real-World Data for Physical AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -506,10 +506,52 @@
         .reveal-d2 { transition-delay: 0.16s; }
         .reveal-d3 { transition-delay: 0.24s; }
 
+        /* ===== Data Domains ===== */
+        .domains-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+        }
+        .domain-card {
+            padding: 32px 28px; background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: 16px;
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .domain-card:hover {
+            border-color: var(--border-hover); transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+        .domain-card::after {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 120px; height: 120px;
+            background: radial-gradient(circle at top right, var(--accent-glow), transparent 70%);
+            opacity: 0; transition: opacity 0.4s;
+        }
+        .domain-card:hover::after { opacity: 1; }
+        .domain-emoji { font-size: 32px; margin-bottom: 16px; display: block; }
+        .domain-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .domain-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 16px; }
+        .domain-tasks { display: flex; flex-wrap: wrap; gap: 6px; }
+        .domain-tag {
+            padding: 4px 10px; border-radius: 6px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            font-size: 11px; font-weight: 500; color: var(--text-muted);
+            font-family: var(--mono);
+        }
+        .domain-card:hover .domain-tag { border-color: var(--border-hover); color: var(--text-secondary); }
+        .domain-live {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 11px; font-weight: 600; color: var(--green);
+            font-family: var(--mono); letter-spacing: 0.3px;
+        }
+        .domain-live .dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+        .domain-soon {
+            font-size: 11px; font-weight: 600; color: var(--accent-light);
+            font-family: var(--mono); letter-spacing: 0.3px;
+        }
+
         /* ===== Responsive ===== */
         @media (max-width: 1024px) {
             .container { padding: 0 28px; }
-            .services-grid, .products-grid { grid-template-columns: 1fr; }
+            .services-grid, .products-grid, .domains-grid { grid-template-columns: 1fr; }
             .compare-grid { grid-template-columns: 1fr; }
             .compare-vs { padding: 16px 0; }
             .pipeline-grid { grid-template-columns: repeat(3, 1fr); }
@@ -543,6 +585,7 @@
     <div class="nav-logo">Peak<span>AI</span></div>
     <ul class="nav-links">
         <li><a href="#services">Services</a></li>
+        <li><a href="#domains">Domains</a></li>
         <li><a href="#pipeline">Pipeline</a></li>
         <li><a href="#data">Data</a></li>
         <li><a href="#tech">Stack</a></li>
@@ -564,8 +607,8 @@
                 <span class="dot"></span>
                 Now collecting at scale
             </div>
-            <h1>Robotics data<br>infrastructure for the<br><span class="highlight">physical AI era</span></h1>
-            <p>We capture, process, and deliver high-fidelity manipulation trajectories at factory scale. Real-world data that bridges the sim-to-real gap.</p>
+            <h1>Real-world data for<br>the <span class="highlight">physical AI era</span></h1>
+            <p>From factory floors to home kitchens — we capture, process, and deliver high-fidelity manipulation data across industrial and consumer environments. The data that bridges the sim-to-real gap.</p>
             <div class="hero-actions">
                 <a href="#contact" class="btn-primary">
                     Access datasets
@@ -580,12 +623,12 @@
                 <div class="stat-label">Hours captured</div>
             </div>
             <div class="stat">
-                <div class="stat-val"><span class="counter" data-target="8">0</span>M+</div>
-                <div class="stat-label">Trajectories</div>
+                <div class="stat-val"><span class="counter" data-target="6">0</span>+</div>
+                <div class="stat-label">Environments</div>
             </div>
             <div class="stat">
-                <div class="stat-val">&lt;5mm</div>
-                <div class="stat-label">Pose accuracy</div>
+                <div class="stat-val"><span class="counter" data-target="8">0</span>M+</div>
+                <div class="stat-label">Trajectories</div>
             </div>
             <div class="stat">
                 <div class="stat-val">24/7</div>
@@ -601,7 +644,7 @@
         <div class="reveal">
             <div class="section-eyebrow">Services</div>
             <h2 class="section-title">End-to-end <span class="highlight">data pipeline</span><br>for robotic learning</h2>
-            <p class="section-desc">From factory floor to training cluster. We handle the entire data lifecycle so you can focus on building better policies.</p>
+            <p class="section-desc">From factory floors to home kitchens. We handle the entire data lifecycle across every environment so you can build better policies.</p>
         </div>
         <div class="services-grid reveal reveal-d1">
             <div class="svc">
@@ -609,12 +652,12 @@
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
                 </div>
                 <h3>Data Collection</h3>
-                <p>Factory-embedded multi-sensor capture systems recording human manipulation at scale.</p>
+                <p>Multi-sensor capture systems deployed across factories, kitchens, and homes recording human manipulation at scale.</p>
                 <ul>
                     <li>Egocentric stereo video</li>
                     <li>Multi-view camera arrays</li>
                     <li>IMU + force-torque sensing</li>
-                    <li>Motion capture integration</li>
+                    <li>Industrial &amp; consumer environments</li>
                 </ul>
             </div>
             <div class="svc">
@@ -622,7 +665,7 @@
                     <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 </div>
                 <h3>Data Processing</h3>
-                <p>Automated extraction and validation pipeline converting raw sensor data into trajectories.</p>
+                <p>Automated pipeline converting raw sensor data from any environment into clean trajectories.</p>
                 <ul>
                     <li>3D pose estimation</li>
                     <li>Monocular depth extraction</li>
@@ -647,13 +690,98 @@
     </div>
 </section>
 
+<!-- Data Domains -->
+<section class="section" id="domains">
+    <div class="container">
+        <div class="reveal">
+            <div class="section-eyebrow">Environments</div>
+            <h2 class="section-title">Data from <span class="highlight">every environment</span></h2>
+            <p class="section-desc">We collect manipulation data wherever humans interact with the physical world — from industrial production lines to everyday consumer settings.</p>
+        </div>
+        <div class="domains-grid">
+            <div class="domain-card reveal reveal-d1">
+                <span class="domain-emoji">&#127981;</span>
+                <h3>Factory &amp; Manufacturing</h3>
+                <p>Assembly lines, sorting stations, packaging, and quality inspection across production environments.</p>
+                <div class="domain-tasks">
+                    <span class="domain-tag">pick-place</span>
+                    <span class="domain-tag">assembly</span>
+                    <span class="domain-tag">sorting</span>
+                    <span class="domain-tag">packaging</span>
+                </div>
+                <div style="margin-top:14px;"><span class="domain-live"><span class="dot"></span> LIVE</span></div>
+            </div>
+            <div class="domain-card reveal reveal-d2">
+                <span class="domain-emoji">&#127859;</span>
+                <h3>Kitchen &amp; Cooking</h3>
+                <p>Meal preparation, ingredient handling, utensil manipulation, and cooking workflows in home and commercial kitchens.</p>
+                <div class="domain-tasks">
+                    <span class="domain-tag">chopping</span>
+                    <span class="domain-tag">stirring</span>
+                    <span class="domain-tag">plating</span>
+                    <span class="domain-tag">pouring</span>
+                </div>
+                <div style="margin-top:14px;"><span class="domain-live"><span class="dot"></span> LIVE</span></div>
+            </div>
+            <div class="domain-card reveal reveal-d3">
+                <span class="domain-emoji">&#127968;</span>
+                <h3>Household &amp; Domestic</h3>
+                <p>Cleaning, laundry folding, organizing, and everyday domestic tasks that home robots need to master.</p>
+                <div class="domain-tasks">
+                    <span class="domain-tag">folding</span>
+                    <span class="domain-tag">cleaning</span>
+                    <span class="domain-tag">tidying</span>
+                    <span class="domain-tag">organizing</span>
+                </div>
+                <div style="margin-top:14px;"><span class="domain-live"><span class="dot"></span> LIVE</span></div>
+            </div>
+            <div class="domain-card reveal reveal-d1">
+                <span class="domain-emoji">&#128722;</span>
+                <h3>Retail &amp; Logistics</h3>
+                <p>Shelf stocking, order picking, inventory handling, and last-mile delivery object manipulation.</p>
+                <div class="domain-tasks">
+                    <span class="domain-tag">stocking</span>
+                    <span class="domain-tag">picking</span>
+                    <span class="domain-tag">packing</span>
+                    <span class="domain-tag">scanning</span>
+                </div>
+                <div style="margin-top:14px;"><span class="domain-live"><span class="dot"></span> LIVE</span></div>
+            </div>
+            <div class="domain-card reveal reveal-d2">
+                <span class="domain-emoji">&#129657;</span>
+                <h3>Healthcare &amp; Lab</h3>
+                <p>Sample handling, instrument manipulation, and precision tasks in clinical and laboratory settings.</p>
+                <div class="domain-tasks">
+                    <span class="domain-tag">pipetting</span>
+                    <span class="domain-tag">sorting</span>
+                    <span class="domain-tag">handling</span>
+                    <span class="domain-tag">sterilizing</span>
+                </div>
+                <div style="margin-top:14px;"><span class="domain-soon">COMING SOON</span></div>
+            </div>
+            <div class="domain-card reveal reveal-d3">
+                <span class="domain-emoji">&#127807;</span>
+                <h3>Agriculture &amp; Outdoor</h3>
+                <p>Harvesting, pruning, sorting produce, and greenhouse tasks for agricultural automation.</p>
+                <div class="domain-tasks">
+                    <span class="domain-tag">harvesting</span>
+                    <span class="domain-tag">pruning</span>
+                    <span class="domain-tag">grading</span>
+                    <span class="domain-tag">planting</span>
+                </div>
+                <div style="margin-top:14px;"><span class="domain-soon">COMING SOON</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Live Capture Showcase -->
 <section class="showcase" id="showcase">
     <div class="container">
         <div class="reveal">
             <div class="section-eyebrow">Live Capture</div>
             <h2 class="section-title">See our data collection<br><span class="highlight">in action</span></h2>
-            <p class="section-desc">Real-time egocentric capture from our factory-embedded sensor systems. Every frame becomes training data.</p>
+            <p class="section-desc">Real-time egocentric capture across industrial and consumer environments. Every frame becomes training data.</p>
         </div>
         <div class="showcase-frame reveal reveal-d1">
             <video autoplay muted loop playsinline poster="poster.jpg">
@@ -675,7 +803,7 @@
         <div class="showcase-label reveal reveal-d2">
             <div class="showcase-label-left">
                 <span class="live-dot"></span>
-                Factory Floor &mdash; Egocentric Manipulation Capture
+                Multi-Environment &mdash; Egocentric Manipulation Capture
             </div>
             <div class="showcase-label-right">832 &times; 464 @ 60fps</div>
         </div>
@@ -710,7 +838,7 @@
         <div class="reveal">
             <div class="section-eyebrow">Why PeakAI</div>
             <h2 class="section-title">Current approaches <span class="highlight">don't scale</span></h2>
-            <p class="section-desc">Existing methods for collecting robot training data each have fundamental limitations that we solve.</p>
+            <p class="section-desc">Existing methods for collecting robot training data are limited to single domains. We capture everywhere.</p>
         </div>
         <div class="compare-grid reveal reveal-d1">
             <div class="compare-col old">
@@ -718,15 +846,15 @@
                 <div class="cmp-card bad"><div class="name">Teleoperation</div><div class="detail">$200+/hr operator cost, doesn't scale</div></div>
                 <div class="cmp-card bad"><div class="name">Simulation Only</div><div class="detail">Sim-to-real gap, limited physics fidelity</div></div>
                 <div class="cmp-card bad"><div class="name">Internet Video</div><div class="detail">No depth data, no force information</div></div>
-                <div class="cmp-card bad"><div class="name">In-house Collection</div><div class="detail">6+ months to build, massive CapEx</div></div>
+                <div class="cmp-card bad"><div class="name">Single-Domain Data</div><div class="detail">Factory-only or lab-only, no cross-environment diversity</div></div>
             </div>
             <div class="compare-vs"><div class="vs-badge">VS</div></div>
             <div class="compare-col new">
                 <h4>PeakAI Infrastructure</h4>
-                <div class="cmp-card good"><div class="name">Human Demo at Scale</div><div class="detail">50K+ hours captured, growing daily</div></div>
+                <div class="cmp-card good"><div class="name">Human Demo at Scale</div><div class="detail">50K+ hours across 6+ environments, growing daily</div></div>
                 <div class="cmp-card good"><div class="name">Real-World Physics</div><div class="detail">No sim-to-real gap, ground truth data</div></div>
                 <div class="cmp-card good"><div class="name">Full Sensor Suite</div><div class="detail">Depth, force, 6-DoF pose included</div></div>
-                <div class="cmp-card good"><div class="name">Instant Access</div><div class="detail">API access in minutes, not months</div></div>
+                <div class="cmp-card good"><div class="name">Multi-Domain Coverage</div><div class="detail">Factory, kitchen, household, retail — one API</div></div>
             </div>
         </div>
     </div>
@@ -738,7 +866,7 @@
         <div class="reveal">
             <div class="section-eyebrow">Pipeline</div>
             <h2 class="section-title">From raw capture to<br><span class="highlight">robot-ready data</span></h2>
-            <p class="section-desc">Six automated stages transform factory recordings into training-ready manipulation trajectories.</p>
+            <p class="section-desc">Six automated stages transform recordings from any environment into training-ready manipulation trajectories.</p>
         </div>
         <div class="pipeline-grid reveal reveal-d1">
             <div class="pipe">
@@ -786,8 +914,8 @@
     <div class="container">
         <div class="reveal">
             <div class="section-eyebrow">Data Products</div>
-            <h2 class="section-title">Three tiers of<br><span class="highlight">robotics data</span></h2>
-            <p class="section-desc">From raw sensor streams to plug-and-play training datasets. Choose the level of processing your team needs.</p>
+            <h2 class="section-title">Three tiers of<br><span class="highlight">real-world data</span></h2>
+            <p class="section-desc">Industrial and consumer data — from raw sensor streams to plug-and-play training datasets. Choose the level your team needs.</p>
         </div>
         <div class="products-grid">
             <div class="prod reveal reveal-d1">
@@ -795,7 +923,7 @@
                 <div class="prod-content">
                     <span class="prod-badge t1">Raw</span>
                     <h3>Sensor Streams</h3>
-                    <p>Raw multi-view video, depth maps, and IMU data for teams with custom processing pipelines.</p>
+                    <p>Raw multi-view video, depth maps, and IMU data from factory floors, kitchens, and homes.</p>
                     <div class="prod-meta">
                         <div class="prod-meta-item"><span class="val">4K 60fps</span><span class="lbl">Resolution</span></div>
                         <div class="prod-meta-item"><span class="val">Bulk</span><span class="lbl">License</span></div>
@@ -808,7 +936,7 @@
                 <div class="prod-content">
                     <span class="prod-badge t2">Processed</span>
                     <h3>3D Trajectories</h3>
-                    <p>Extracted 6-DoF manipulation trajectories with physics validation, ready for policy training.</p>
+                    <p>6-DoF manipulation trajectories across industrial and consumer tasks, physics-validated and training-ready.</p>
                     <div class="prod-meta">
                         <div class="prod-meta-item"><span class="val">&lt;5mm</span><span class="lbl">Accuracy</span></div>
                         <div class="prod-meta-item"><span class="val">API</span><span class="lbl">Access</span></div>
@@ -821,7 +949,7 @@
                 <div class="prod-content">
                     <span class="prod-badge t3">Labeled</span>
                     <h3>Task Datasets</h3>
-                    <p>Curated, task-labeled datasets with hierarchical taxonomies. Plug into your training pipeline.</p>
+                    <p>Curated datasets labeled by environment, task type, and object class. Factory to kitchen, one taxonomy.</p>
                     <div class="prod-meta">
                         <div class="prod-meta-item"><span class="val">500+</span><span class="lbl">Tasks</span></div>
                         <div class="prod-meta-item"><span class="val">LeRobot</span><span class="lbl">Format</span></div>
@@ -857,9 +985,10 @@
             <h2 class="section-title">Common questions</h2>
         </div>
         <div class="faq-list reveal reveal-d1">
-            <div class="faq-item"><div class="faq-q">What types of data do you collect?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">Multi-view video (4K, 60fps), depth maps, IMU data, force-torque readings, and synchronized motion capture. All timestamped with sub-millisecond precision.</div></div></div>
+            <div class="faq-item"><div class="faq-q">What types of data do you collect?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">Multi-view video (4K, 60fps), depth maps, IMU data, and force-torque readings across industrial and consumer environments — from factory assembly to kitchen cooking to household tasks.</div></div></div>
             <div class="faq-item"><div class="faq-q">What accuracy can I expect?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">Sub-5mm positional accuracy and sub-2 degree rotational accuracy, validated against ground-truth motion capture with physics consistency checks.</div></div></div>
-            <div class="faq-item"><div class="faq-q">How is this different from teleoperation?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">We capture natural human demonstrations in real factory environments. More diverse and scalable than teleoperation at a fraction of the cost per trajectory.</div></div></div>
+            <div class="faq-item"><div class="faq-q">Do you cover consumer and industrial environments?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">Yes. We capture data in factories, kitchens, homes, retail spaces, and more. Our sensor systems are designed to deploy in any real-world setting where humans manipulate objects.</div></div></div>
+            <div class="faq-item"><div class="faq-q">How is this different from teleoperation?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">We capture natural human demonstrations in real environments — factories, kitchens, homes. More diverse and scalable than teleoperation at a fraction of the cost.</div></div></div>
             <div class="faq-item"><div class="faq-q">What formats do you support?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">LeRobot, Open X-Embodiment, HDF5, and custom formats. API streaming with filtering by task type, environment, and quality metrics.</div></div></div>
             <div class="faq-item"><div class="faq-q">Can you do custom collection campaigns?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">Yes. We deploy to your facilities. First data within 2-4 weeks, full delivery in 6-8 weeks depending on scope.</div></div></div>
         </div>
@@ -877,7 +1006,7 @@
         <div class="reveal">
             <div class="section-eyebrow">Get Started</div>
             <h2 class="section-title">Ready to train<br><span class="highlight">your robots</span>?</h2>
-            <p class="section-desc">Access the world's largest robotics manipulation dataset. Start training better policies today.</p>
+            <p class="section-desc">Access real-world manipulation data from factories, kitchens, and homes. Train robots that work everywhere.</p>
             <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
                 <a href="mailto:data@peakai.com" class="btn-primary">
                     Contact us

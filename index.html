@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeakAI | Robotics Data Infrastructure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #09090b;
+            --bg-subtle: #0f0f13;
+            --bg-card: #111116;
+            --bg-card-hover: #16161d;
+            --border: #1c1c25;
+            --border-hover: #2a2a38;
+            --text: #fafafa;
+            --text-secondary: #a0a0b4;
+            --text-muted: #55556a;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --green: #22c55e;
+            --red: #ef4444;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== Ambient Gradient ===== */
+        .ambient {
+            position: fixed; inset: 0; z-index: 0;
+            pointer-events: none; overflow: hidden;
+        }
+        .ambient-orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(120px); opacity: 0.07;
+        }
+        .ambient-orb.a { width: 800px; height: 800px; background: var(--accent); top: -200px; right: -200px; animation: drift1 20s ease-in-out infinite alternate; }
+        .ambient-orb.b { width: 600px; height: 600px; background: #8b5cf6; bottom: -100px; left: -100px; animation: drift2 25s ease-in-out infinite alternate; }
+        @keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(-60px, 40px); } }
+        @keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(40px, -30px); } }
+
+        /* ===== Nav ===== */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 0 48px; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(9,9,11,0.8);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        nav.scrolled { border-color: var(--border); }
+        .nav-logo { font-size: 15px; font-weight: 800; letter-spacing: 1.5px; color: var(--text); }
+        .nav-logo span { color: var(--accent-light); }
+        .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
+        .nav-links a { font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+        .nav-cta {
+            font-size: 13px; font-weight: 600; color: #fff;
+            background: var(--accent); padding: 8px 20px; border-radius: 8px;
+            text-decoration: none; transition: all 0.2s;
+        }
+        .nav-cta:hover { background: var(--accent-light); transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-glow); }
+
+        /* ===== Layout ===== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 2; }
+        section { position: relative; z-index: 2; }
+
+        /* ===== Hero with Video Background ===== */
+        .hero {
+            position: relative; min-height: 100vh; display: flex; align-items: center;
+            padding: 140px 0 100px; overflow: hidden;
+        }
+        .hero-video-bg {
+            position: absolute; inset: 0; z-index: 0; overflow: hidden;
+        }
+        .hero-video-bg video {
+            position: absolute; top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0.12;
+            filter: saturate(0.4) contrast(1.1);
+        }
+        .hero-video-bg::after {
+            content: ''; position: absolute; inset: 0;
+            background:
+                linear-gradient(180deg, var(--bg) 0%, transparent 30%),
+                linear-gradient(180deg, transparent 60%, var(--bg) 100%),
+                linear-gradient(90deg, var(--bg) 0%, transparent 50%);
+            z-index: 1;
+        }
+        .hero .container { position: relative; z-index: 5; }
+        .hero-inner { max-width: 800px; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px 6px 10px;
+            background: rgba(17,17,22,0.85); border: 1px solid var(--border); border-radius: 100px;
+            font-size: 12px; font-weight: 500; color: var(--text-secondary);
+            margin-bottom: 32px; backdrop-filter: blur(10px);
+            opacity: 0; animation: fadeUp 0.7s ease 0.1s forwards;
+        }
+        .hero-badge .dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .hero h1 {
+            font-size: clamp(48px, 6.5vw, 80px);
+            font-weight: 800; line-height: 1.05; letter-spacing: -2.5px;
+            margin-bottom: 24px;
+            opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent-light), #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero p {
+            font-size: 19px; line-height: 1.7; color: var(--text-secondary);
+            max-width: 580px; margin-bottom: 40px;
+            opacity: 0; animation: fadeUp 0.8s ease 0.35s forwards;
+        }
+        .hero-actions {
+            display: flex; gap: 12px; align-items: center;
+            opacity: 0; animation: fadeUp 0.8s ease 0.5s forwards;
+        }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 28px; background: var(--accent); color: #fff;
+            font-size: 14px; font-weight: 600; border-radius: 10px;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); box-shadow: 0 8px 30px var(--accent-glow); }
+        .btn-primary svg { transition: transform 0.2s; }
+        .btn-primary:hover svg { transform: translateX(3px); }
+        .btn-secondary {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 28px; background: transparent; color: var(--text-secondary);
+            font-size: 14px; font-weight: 500; border-radius: 10px;
+            text-decoration: none; border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { border-color: var(--border-hover); color: var(--text); background: var(--bg-card); }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== Stats ===== */
+        .stats-bar {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+            background: var(--border); border-radius: 16px; overflow: hidden;
+            margin-top: 72px;
+            opacity: 0; animation: fadeUp 0.8s ease 0.65s forwards;
+        }
+        .stat { background: var(--bg); padding: 28px 24px; text-align: center; transition: background 0.3s; }
+        .stat:hover { background: var(--bg-subtle); }
+        .stat-val {
+            font-size: clamp(28px, 3vw, 40px); font-weight: 800;
+            letter-spacing: -1px; margin-bottom: 4px;
+            background: linear-gradient(135deg, var(--text), var(--text-secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .stat-val .accent {
+            background: linear-gradient(135deg, var(--accent-light), #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; }
+
+        /* ===== Section styling ===== */
+        .section { padding: 100px 0; }
+        .section-eyebrow {
+            font-family: var(--mono); font-size: 12px; font-weight: 600;
+            color: var(--accent-light); letter-spacing: 1px;
+            margin-bottom: 16px; text-transform: uppercase;
+        }
+        .section-title {
+            font-size: clamp(32px, 4vw, 48px); font-weight: 800;
+            letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 16px;
+        }
+        .section-title .highlight {
+            background: linear-gradient(135deg, var(--accent-light), #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .section-desc {
+            font-size: 17px; color: var(--text-secondary); line-height: 1.7;
+            max-width: 560px; margin-bottom: 48px;
+        }
+
+        /* ===== Services Grid ===== */
+        .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; }
+        .svc { background: var(--bg); padding: 40px 32px; transition: background 0.3s; }
+        .svc:hover { background: var(--bg-subtle); }
+        .svc-icon {
+            width: 44px; height: 44px;
+            background: var(--accent-glow); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+        }
+        .svc-icon svg { width: 22px; height: 22px; stroke: var(--accent-light); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+        .svc h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .svc p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 20px; }
+        .svc ul { list-style: none; }
+        .svc ul li {
+            font-size: 13px; color: var(--text-muted); padding: 7px 0;
+            border-top: 1px solid var(--border);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .svc ul li::before { content: ''; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+        /* ===== Live Capture Showcase ===== */
+        .showcase { padding: 60px 0 100px; }
+        .showcase-frame {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #000;
+            box-shadow:
+                0 0 0 1px rgba(99,102,241,0.08),
+                0 24px 80px -12px rgba(0,0,0,0.6),
+                0 0 120px -40px rgba(99,102,241,0.15);
+            transition: box-shadow 0.4s ease;
+        }
+        .showcase-frame:hover {
+            box-shadow:
+                0 0 0 1px rgba(99,102,241,0.15),
+                0 32px 100px -12px rgba(0,0,0,0.7),
+                0 0 160px -30px rgba(99,102,241,0.2);
+        }
+        .showcase-frame video {
+            display: block; width: 100%; aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+        /* HUD Overlay on video */
+        .showcase-hud {
+            position: absolute; inset: 0; pointer-events: none;
+            z-index: 5;
+        }
+        .hud-rec {
+            position: absolute; top: 20px; left: 24px;
+            display: flex; align-items: center; gap: 8px;
+            font-family: var(--mono); font-size: 11px; font-weight: 600;
+            color: #fff; letter-spacing: 0.5px;
+        }
+        .hud-rec-dot {
+            width: 8px; height: 8px; background: var(--red); border-radius: 50%;
+            animation: recBlink 1.2s ease-in-out infinite;
+        }
+        @keyframes recBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+        .hud-timecode {
+            position: absolute; top: 20px; right: 24px;
+            font-family: var(--mono); font-size: 11px; font-weight: 500;
+            color: rgba(255,255,255,0.6); letter-spacing: 1px;
+        }
+        .hud-sensors {
+            position: absolute; bottom: 20px; left: 24px;
+            display: flex; gap: 8px;
+        }
+        .hud-tag {
+            padding: 4px 10px; border-radius: 6px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
+            font-family: var(--mono); font-size: 10px; font-weight: 600;
+            color: rgba(255,255,255,0.7); letter-spacing: 0.3px;
+        }
+        .hud-tag.active { border-color: var(--accent); color: var(--accent-light); }
+        .hud-badge-br {
+            position: absolute; bottom: 20px; right: 24px;
+            padding: 4px 12px; border-radius: 6px;
+            background: rgba(99,102,241,0.15); backdrop-filter: blur(8px);
+            border: 1px solid rgba(99,102,241,0.3);
+            font-family: var(--mono); font-size: 10px; font-weight: 700;
+            color: var(--accent-light); letter-spacing: 0.5px;
+        }
+        /* Corner brackets for video frame */
+        .showcase-frame::before, .showcase-frame::after {
+            content: ''; position: absolute; z-index: 6;
+            width: 32px; height: 32px;
+            border-color: var(--accent-light); border-style: solid;
+            opacity: 0.25; pointer-events: none;
+        }
+        .showcase-frame::before { top: 12px; left: 12px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+        .showcase-frame::after { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+        .showcase-label {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 0 0;
+        }
+        .showcase-label-left {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 13px; color: var(--text-muted);
+        }
+        .showcase-label-left .live-dot {
+            width: 6px; height: 6px; background: var(--green); border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .showcase-label-right { font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+
+        /* ===== Frame Filmstrip ===== */
+        .filmstrip-wrap { margin-top: 40px; overflow: hidden; position: relative; }
+        .filmstrip-wrap::before, .filmstrip-wrap::after {
+            content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 3; pointer-events: none;
+        }
+        .filmstrip-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg) 0%, transparent 100%); }
+        .filmstrip-wrap::after { right: 0; background: linear-gradient(270deg, var(--bg) 0%, transparent 100%); }
+        .filmstrip {
+            display: flex; gap: 8px;
+            animation: filmScroll 30s linear infinite;
+        }
+        .filmstrip-frame {
+            flex-shrink: 0; width: 180px; height: 100px;
+            border-radius: 10px; overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+            transition: all 0.3s;
+        }
+        .filmstrip-frame:hover {
+            border-color: var(--accent);
+            transform: scale(1.04);
+            box-shadow: 0 8px 30px rgba(99,102,241,0.15);
+        }
+        .filmstrip-frame img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: saturate(0.8) brightness(0.9);
+            transition: filter 0.3s;
+        }
+        .filmstrip-frame:hover img { filter: saturate(1) brightness(1); }
+        .filmstrip-frame .frame-num {
+            position: absolute; bottom: 6px; left: 8px;
+            font-family: var(--mono); font-size: 9px; font-weight: 700;
+            color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.5);
+            padding: 2px 6px; border-radius: 4px; backdrop-filter: blur(4px);
+        }
+        @keyframes filmScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ===== Compare ===== */
+        .compare-grid {
+            display: grid; grid-template-columns: 1fr 48px 1fr; gap: 24px; align-items: start;
+        }
+        .compare-col h4 {
+            font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+            margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+        }
+        .compare-col.old h4 { color: var(--red); }
+        .compare-col.new h4 { color: var(--green); }
+        .cmp-card {
+            padding: 18px 20px; background: var(--bg-card); border-radius: 12px;
+            margin-bottom: 8px; border: 1px solid var(--border); transition: border-color 0.2s;
+        }
+        .cmp-card:hover { border-color: var(--border-hover); }
+        .cmp-card .name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .cmp-card .detail { font-size: 12px; }
+        .cmp-card.bad .detail { color: var(--red); opacity: 0.8; }
+        .cmp-card.good .detail { color: var(--green); opacity: 0.9; }
+        .compare-vs { display: flex; align-items: center; justify-content: center; align-self: center; }
+        .vs-badge {
+            width: 40px; height: 40px; border-radius: 50%;
+            border: 1px solid var(--border); display: flex;
+            align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; color: var(--text-muted);
+        }
+
+        /* ===== Pipeline ===== */
+        .pipeline-grid {
+            display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px;
+            background: var(--border); border-radius: 16px; overflow: hidden;
+        }
+        .pipe { background: var(--bg); padding: 32px 16px; text-align: center; transition: background 0.3s; position: relative; }
+        .pipe:hover { background: var(--bg-subtle); }
+        .pipe-num { font-size: 11px; font-weight: 700; color: var(--accent-light); font-family: var(--mono); margin-bottom: 12px; }
+        .pipe-icon { font-size: 24px; margin-bottom: 10px; }
+        .pipe-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pipe-sub { font-size: 11px; color: var(--text-muted); }
+        /* Frame thumbnail in first pipeline step */
+        .pipe-thumb {
+            width: 52px; height: 32px; border-radius: 6px; overflow: hidden;
+            margin: 0 auto 10px; border: 1px solid var(--border);
+            opacity: 0.7; transition: opacity 0.3s;
+        }
+        .pipe:hover .pipe-thumb { opacity: 1; }
+        .pipe-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ===== Products with frame previews ===== */
+        .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .prod {
+            padding: 0; background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; transition: all 0.3s; overflow: hidden;
+        }
+        .prod:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .prod-preview {
+            width: 100%; height: 120px; overflow: hidden; position: relative;
+        }
+        .prod-preview img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: saturate(0.5) brightness(0.6);
+            transition: all 0.5s;
+        }
+        .prod:hover .prod-preview img { filter: saturate(0.8) brightness(0.75); transform: scale(1.05); }
+        .prod-preview::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 30%, var(--bg-card) 100%);
+        }
+        .prod-content { padding: 24px 28px 36px; }
+        .prod-badge {
+            display: inline-block; font-size: 11px; font-weight: 600;
+            padding: 4px 10px; border-radius: 6px; margin-bottom: 16px;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .prod-badge.t1 { background: rgba(99,102,241,0.12); color: var(--accent-light); }
+        .prod-badge.t2 { background: rgba(139,92,246,0.12); color: #a78bfa; }
+        .prod-badge.t3 { background: rgba(168,85,247,0.12); color: #c084fc; }
+        .prod h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+        .prod p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 24px; }
+        .prod-meta { display: flex; gap: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+        .prod-meta-item .val { font-size: 14px; font-weight: 700; color: var(--text); display: block; }
+        .prod-meta-item .lbl { font-size: 11px; color: var(--text-muted); }
+
+        /* ===== Tech ===== */
+        .tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; }
+        .tech-card { background: var(--bg); padding: 36px 24px; transition: background 0.3s; }
+        .tech-card:hover { background: var(--bg-subtle); }
+        .tech-card .icon { font-size: 28px; margin-bottom: 16px; }
+        .tech-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+        .tech-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ===== FAQ ===== */
+        .faq-list { max-width: 700px; }
+        .faq-item { border-bottom: 1px solid var(--border); }
+        .faq-q {
+            padding: 20px 0; display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; font-size: 15px; font-weight: 600; color: var(--text);
+            transition: color 0.2s; user-select: none;
+        }
+        .faq-q:hover { color: var(--accent-light); }
+        .faq-icon {
+            width: 24px; height: 24px; border-radius: 6px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: var(--text-muted); flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        .faq-item.open .faq-icon { background: var(--accent-glow); border-color: var(--accent); color: var(--accent-light); transform: rotate(45deg); }
+        .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .faq-item.open .faq-a { max-height: 200px; }
+        .faq-a-inner { padding: 0 0 20px; font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+        /* ===== CTA with video bg ===== */
+        .cta { padding: 100px 0; text-align: center; position: relative; overflow: hidden; }
+        .cta-video-bg {
+            position: absolute; inset: 0; z-index: 0; overflow: hidden;
+        }
+        .cta-video-bg video {
+            position: absolute; top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover; opacity: 0.06;
+            filter: saturate(0) blur(2px);
+        }
+        .cta-video-bg::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, var(--bg) 70%);
+        }
+        .cta .container { position: relative; z-index: 5; }
+        .cta .section-title { max-width: 500px; margin: 0 auto 16px; }
+        .cta .section-desc { max-width: 440px; margin: 0 auto 40px; }
+        .cta-email {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 12px 24px; background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 10px; font-family: var(--mono); font-size: 14px;
+            color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
+            margin-top: 20px;
+        }
+        .cta-email:hover { border-color: var(--accent); color: var(--accent-light); }
+
+        /* ===== Footer ===== */
+        footer {
+            position: relative; z-index: 2; border-top: 1px solid var(--border);
+            padding: 40px 0;
+        }
+        .footer-inner { display: flex; align-items: center; justify-content: space-between; }
+        .footer-left { font-size: 12px; color: var(--text-muted); }
+        .footer-links { display: flex; gap: 24px; }
+        .footer-links a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--text-secondary); }
+
+        /* ===== Scroll Reveal ===== */
+        .reveal {
+            opacity: 0; transform: translateY(32px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.vis { opacity: 1; transform: translateY(0); }
+        .reveal-d1 { transition-delay: 0.08s; }
+        .reveal-d2 { transition-delay: 0.16s; }
+        .reveal-d3 { transition-delay: 0.24s; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            .container { padding: 0 28px; }
+            .services-grid, .products-grid { grid-template-columns: 1fr; }
+            .compare-grid { grid-template-columns: 1fr; }
+            .compare-vs { padding: 16px 0; }
+            .pipeline-grid { grid-template-columns: repeat(3, 1fr); }
+            .tech-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .filmstrip-frame { width: 140px; height: 78px; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 20px; }
+            nav { padding: 0 20px; }
+            .nav-links { display: none; }
+            .pipeline-grid { grid-template-columns: repeat(2, 1fr); }
+            .tech-grid { grid-template-columns: 1fr; }
+            .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .hero-actions { flex-direction: column; align-items: flex-start; }
+            .hud-sensors { display: none; }
+            .filmstrip-frame { width: 120px; height: 67px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Ambient background -->
+<div class="ambient">
+    <div class="ambient-orb a"></div>
+    <div class="ambient-orb b"></div>
+</div>
+
+<!-- Nav -->
+<nav id="nav">
+    <div class="nav-logo">Peak<span>AI</span></div>
+    <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#pipeline">Pipeline</a></li>
+        <li><a href="#data">Data</a></li>
+        <li><a href="#tech">Stack</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact" class="nav-cta">Get Data</a></li>
+    </ul>
+</nav>
+
+<!-- Hero with Video Background -->
+<section class="hero">
+    <div class="hero-video-bg">
+        <video autoplay muted loop playsinline poster="poster.jpg">
+            <source src="hero-video.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="container">
+        <div class="hero-inner">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Now collecting at scale
+            </div>
+            <h1>Robotics data<br>infrastructure for the<br><span class="highlight">physical AI era</span></h1>
+            <p>We capture, process, and deliver high-fidelity manipulation trajectories at factory scale. Real-world data that bridges the sim-to-real gap.</p>
+            <div class="hero-actions">
+                <a href="#contact" class="btn-primary">
+                    Access datasets
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <a href="#pipeline" class="btn-secondary">How it works</a>
+            </div>
+        </div>
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-val"><span class="counter" data-target="50">0</span>K+</div>
+                <div class="stat-label">Hours captured</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val"><span class="counter" data-target="8">0</span>M+</div>
+                <div class="stat-label">Trajectories</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">&lt;5mm</div>
+                <div class="stat-label">Pose accuracy</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">24/7</div>
+                <div class="stat-label">Pipeline active</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services -->
+<section class="section" id="services">
+    <div class="container">
+        <div class="reveal">
+            <div class="section-eyebrow">Services</div>
+            <h2 class="section-title">End-to-end <span class="highlight">data pipeline</span><br>for robotic learning</h2>
+            <p class="section-desc">From factory floor to training cluster. We handle the entire data lifecycle so you can focus on building better policies.</p>
+        </div>
+        <div class="services-grid reveal reveal-d1">
+            <div class="svc">
+                <div class="svc-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+                </div>
+                <h3>Data Collection</h3>
+                <p>Factory-embedded multi-sensor capture systems recording human manipulation at scale.</p>
+                <ul>
+                    <li>Egocentric stereo video</li>
+                    <li>Multi-view camera arrays</li>
+                    <li>IMU + force-torque sensing</li>
+                    <li>Motion capture integration</li>
+                </ul>
+            </div>
+            <div class="svc">
+                <div class="svc-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <h3>Data Processing</h3>
+                <p>Automated extraction and validation pipeline converting raw sensor data into trajectories.</p>
+                <ul>
+                    <li>3D pose estimation</li>
+                    <li>Monocular depth extraction</li>
+                    <li>Multi-view 3D reconstruction</li>
+                    <li>Physics-based validation</li>
+                </ul>
+            </div>
+            <div class="svc">
+                <div class="svc-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </div>
+                <h3>Data Delivery</h3>
+                <p>Standardized, versioned datasets compatible with all major robot learning frameworks.</p>
+                <ul>
+                    <li>LeRobot / Open X format</li>
+                    <li>Streaming API access</li>
+                    <li>Custom task filtering</li>
+                    <li>Version-controlled releases</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Live Capture Showcase -->
+<section class="showcase" id="showcase">
+    <div class="container">
+        <div class="reveal">
+            <div class="section-eyebrow">Live Capture</div>
+            <h2 class="section-title">See our data collection<br><span class="highlight">in action</span></h2>
+            <p class="section-desc">Real-time egocentric capture from our factory-embedded sensor systems. Every frame becomes training data.</p>
+        </div>
+        <div class="showcase-frame reveal reveal-d1">
+            <video autoplay muted loop playsinline poster="poster.jpg">
+                <source src="hero-video.mp4" type="video/mp4">
+            </video>
+            <div class="showcase-hud">
+                <div class="hud-rec"><div class="hud-rec-dot"></div> REC</div>
+                <div class="hud-timecode" id="hudTime">00:00:00:00</div>
+                <div class="hud-sensors">
+                    <span class="hud-tag active">RGB 4K</span>
+                    <span class="hud-tag active">DEPTH</span>
+                    <span class="hud-tag">IMU</span>
+                    <span class="hud-tag">FORCE</span>
+                    <span class="hud-tag active">6-DoF</span>
+                </div>
+                <div class="hud-badge-br">PEAKAI CAM-01</div>
+            </div>
+        </div>
+        <div class="showcase-label reveal reveal-d2">
+            <div class="showcase-label-left">
+                <span class="live-dot"></span>
+                Factory Floor &mdash; Egocentric Manipulation Capture
+            </div>
+            <div class="showcase-label-right">832 &times; 464 @ 60fps</div>
+        </div>
+        <!-- Frame filmstrip -->
+        <div class="filmstrip-wrap reveal reveal-d3">
+            <div class="filmstrip" id="filmstrip">
+                <div class="filmstrip-frame"><img src="frames/frame_01.jpg" alt="Frame" loading="lazy"><span class="frame-num">F001</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_02.jpg" alt="Frame" loading="lazy"><span class="frame-num">F300</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_03.jpg" alt="Frame" loading="lazy"><span class="frame-num">F600</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_04.jpg" alt="Frame" loading="lazy"><span class="frame-num">F900</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_05.jpg" alt="Frame" loading="lazy"><span class="frame-num">F1200</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_06.jpg" alt="Frame" loading="lazy"><span class="frame-num">F1500</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_07.jpg" alt="Frame" loading="lazy"><span class="frame-num">F1800</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_08.jpg" alt="Frame" loading="lazy"><span class="frame-num">F2400</span></div>
+                <!-- Duplicate for seamless loop -->
+                <div class="filmstrip-frame"><img src="frames/frame_01.jpg" alt="Frame" loading="lazy"><span class="frame-num">F001</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_02.jpg" alt="Frame" loading="lazy"><span class="frame-num">F300</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_03.jpg" alt="Frame" loading="lazy"><span class="frame-num">F600</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_04.jpg" alt="Frame" loading="lazy"><span class="frame-num">F900</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_05.jpg" alt="Frame" loading="lazy"><span class="frame-num">F1200</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_06.jpg" alt="Frame" loading="lazy"><span class="frame-num">F1500</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_07.jpg" alt="Frame" loading="lazy"><span class="frame-num">F1800</span></div>
+                <div class="filmstrip-frame"><img src="frames/frame_08.jpg" alt="Frame" loading="lazy"><span class="frame-num">F2400</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Us -->
+<section class="section" id="why">
+    <div class="container">
+        <div class="reveal">
+            <div class="section-eyebrow">Why PeakAI</div>
+            <h2 class="section-title">Current approaches <span class="highlight">don't scale</span></h2>
+            <p class="section-desc">Existing methods for collecting robot training data each have fundamental limitations that we solve.</p>
+        </div>
+        <div class="compare-grid reveal reveal-d1">
+            <div class="compare-col old">
+                <h4>Existing Methods</h4>
+                <div class="cmp-card bad"><div class="name">Teleoperation</div><div class="detail">$200+/hr operator cost, doesn't scale</div></div>
+                <div class="cmp-card bad"><div class="name">Simulation Only</div><div class="detail">Sim-to-real gap, limited physics fidelity</div></div>
+                <div class="cmp-card bad"><div class="name">Internet Video</div><div class="detail">No depth data, no force information</div></div>
+                <div class="cmp-card bad"><div class="name">In-house Collection</div><div class="detail">6+ months to build, massive CapEx</div></div>
+            </div>
+            <div class="compare-vs"><div class="vs-badge">VS</div></div>
+            <div class="compare-col new">
+                <h4>PeakAI Infrastructure</h4>
+                <div class="cmp-card good"><div class="name">Human Demo at Scale</div><div class="detail">50K+ hours captured, growing daily</div></div>
+                <div class="cmp-card good"><div class="name">Real-World Physics</div><div class="detail">No sim-to-real gap, ground truth data</div></div>
+                <div class="cmp-card good"><div class="name">Full Sensor Suite</div><div class="detail">Depth, force, 6-DoF pose included</div></div>
+                <div class="cmp-card good"><div class="name">Instant Access</div><div class="detail">API access in minutes, not months</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pipeline -->
+<section class="section" id="pipeline">
+    <div class="container">
+        <div class="reveal">
+            <div class="section-eyebrow">Pipeline</div>
+            <h2 class="section-title">From raw capture to<br><span class="highlight">robot-ready data</span></h2>
+            <p class="section-desc">Six automated stages transform factory recordings into training-ready manipulation trajectories.</p>
+        </div>
+        <div class="pipeline-grid reveal reveal-d1">
+            <div class="pipe">
+                <div class="pipe-num">01</div>
+                <div class="pipe-thumb"><img src="frames/frame_01.jpg" alt="Capture"></div>
+                <div class="pipe-name">Capture</div>
+                <div class="pipe-sub">Multi-sensor recording</div>
+            </div>
+            <div class="pipe">
+                <div class="pipe-num">02</div>
+                <div class="pipe-thumb"><img src="frames/frame_03.jpg" alt="Depth"></div>
+                <div class="pipe-name">Depth</div>
+                <div class="pipe-sub">Stereo estimation</div>
+            </div>
+            <div class="pipe">
+                <div class="pipe-num">03</div>
+                <div class="pipe-thumb"><img src="frames/frame_04.jpg" alt="Pose"></div>
+                <div class="pipe-name">Pose</div>
+                <div class="pipe-sub">6-DoF extraction</div>
+            </div>
+            <div class="pipe">
+                <div class="pipe-num">04</div>
+                <div class="pipe-thumb"><img src="frames/frame_06.jpg" alt="Fusion"></div>
+                <div class="pipe-name">Fusion</div>
+                <div class="pipe-sub">3D reconstruction</div>
+            </div>
+            <div class="pipe">
+                <div class="pipe-num">05</div>
+                <div class="pipe-thumb"><img src="frames/frame_07.jpg" alt="Validate"></div>
+                <div class="pipe-name">Validate</div>
+                <div class="pipe-sub">Physics checks</div>
+            </div>
+            <div class="pipe">
+                <div class="pipe-num">06</div>
+                <div class="pipe-thumb"><img src="frames/frame_08.jpg" alt="Deliver"></div>
+                <div class="pipe-name">Deliver</div>
+                <div class="pipe-sub">API & bulk export</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Data Products -->
+<section class="section" id="data">
+    <div class="container">
+        <div class="reveal">
+            <div class="section-eyebrow">Data Products</div>
+            <h2 class="section-title">Three tiers of<br><span class="highlight">robotics data</span></h2>
+            <p class="section-desc">From raw sensor streams to plug-and-play training datasets. Choose the level of processing your team needs.</p>
+        </div>
+        <div class="products-grid">
+            <div class="prod reveal reveal-d1">
+                <div class="prod-preview"><img src="frames/frame_01.jpg" alt="Raw sensor data"></div>
+                <div class="prod-content">
+                    <span class="prod-badge t1">Raw</span>
+                    <h3>Sensor Streams</h3>
+                    <p>Raw multi-view video, depth maps, and IMU data for teams with custom processing pipelines.</p>
+                    <div class="prod-meta">
+                        <div class="prod-meta-item"><span class="val">4K 60fps</span><span class="lbl">Resolution</span></div>
+                        <div class="prod-meta-item"><span class="val">Bulk</span><span class="lbl">License</span></div>
+                        <div class="prod-meta-item"><span class="val">TB-scale</span><span class="lbl">Volume</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="prod reveal reveal-d2">
+                <div class="prod-preview"><img src="frames/frame_04.jpg" alt="Processed trajectories"></div>
+                <div class="prod-content">
+                    <span class="prod-badge t2">Processed</span>
+                    <h3>3D Trajectories</h3>
+                    <p>Extracted 6-DoF manipulation trajectories with physics validation, ready for policy training.</p>
+                    <div class="prod-meta">
+                        <div class="prod-meta-item"><span class="val">&lt;5mm</span><span class="lbl">Accuracy</span></div>
+                        <div class="prod-meta-item"><span class="val">API</span><span class="lbl">Access</span></div>
+                        <div class="prod-meta-item"><span class="val">8M+</span><span class="lbl">Trajectories</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="prod reveal reveal-d3">
+                <div class="prod-preview"><img src="frames/frame_07.jpg" alt="Labeled task datasets"></div>
+                <div class="prod-content">
+                    <span class="prod-badge t3">Labeled</span>
+                    <h3>Task Datasets</h3>
+                    <p>Curated, task-labeled datasets with hierarchical taxonomies. Plug into your training pipeline.</p>
+                    <div class="prod-meta">
+                        <div class="prod-meta-item"><span class="val">500+</span><span class="lbl">Tasks</span></div>
+                        <div class="prod-meta-item"><span class="val">LeRobot</span><span class="lbl">Format</span></div>
+                        <div class="prod-meta-item"><span class="val">Monthly</span><span class="lbl">Updates</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tech -->
+<section class="section" id="tech">
+    <div class="container">
+        <div class="reveal">
+            <div class="section-eyebrow">Technology</div>
+            <h2 class="section-title">Built for <span class="highlight">scale and precision</span></h2>
+        </div>
+        <div class="tech-grid reveal reveal-d1">
+            <div class="tech-card"><div class="icon">&#128247;</div><h4>Multi-Camera Arrays</h4><p>Synchronized 4K stereo with sub-ms alignment across 8+ viewpoints.</p></div>
+            <div class="tech-card"><div class="icon">&#129504;</div><h4>Neural Pose Estimation</h4><p>SOTA hand & object pose networks trained on proprietary datasets.</p></div>
+            <div class="tech-card"><div class="icon">&#9878;</div><h4>Physics Validation</h4><p>Automated consistency checks ensuring real-world dynamics constraints.</p></div>
+            <div class="tech-card"><div class="icon">&#9729;</div><h4>Cloud Infrastructure</h4><p>GPU-accelerated pipeline with 99.9% uptime and global CDN.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+    <div class="container">
+        <div class="reveal">
+            <div class="section-eyebrow">FAQ</div>
+            <h2 class="section-title">Common questions</h2>
+        </div>
+        <div class="faq-list reveal reveal-d1">
+            <div class="faq-item"><div class="faq-q">What types of data do you collect?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">Multi-view video (4K, 60fps), depth maps, IMU data, force-torque readings, and synchronized motion capture. All timestamped with sub-millisecond precision.</div></div></div>
+            <div class="faq-item"><div class="faq-q">What accuracy can I expect?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">Sub-5mm positional accuracy and sub-2 degree rotational accuracy, validated against ground-truth motion capture with physics consistency checks.</div></div></div>
+            <div class="faq-item"><div class="faq-q">How is this different from teleoperation?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">We capture natural human demonstrations in real factory environments. More diverse and scalable than teleoperation at a fraction of the cost per trajectory.</div></div></div>
+            <div class="faq-item"><div class="faq-q">What formats do you support?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">LeRobot, Open X-Embodiment, HDF5, and custom formats. API streaming with filtering by task type, environment, and quality metrics.</div></div></div>
+            <div class="faq-item"><div class="faq-q">Can you do custom collection campaigns?<span class="faq-icon">+</span></div><div class="faq-a"><div class="faq-a-inner">Yes. We deploy to your facilities. First data within 2-4 weeks, full delivery in 6-8 weeks depending on scope.</div></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA with subtle video background -->
+<section class="cta" id="contact">
+    <div class="cta-video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="hero-video.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="container">
+        <div class="reveal">
+            <div class="section-eyebrow">Get Started</div>
+            <h2 class="section-title">Ready to train<br><span class="highlight">your robots</span>?</h2>
+            <p class="section-desc">Access the world's largest robotics manipulation dataset. Start training better policies today.</p>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <a href="mailto:data@peakai.com" class="btn-primary">
+                    Contact us
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <a href="#services" class="btn-secondary">Learn more</a>
+            </div>
+            <div class="cta-email" id="emailBox" onclick="copyEmail()">
+                data@peakai.com
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 11V3.5A1.5 1.5 0 014.5 2H11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-left">&copy; 2026 PeakAI Labs</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Documentation</a>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40));
+
+// Scroll reveal with fallback
+const ro = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); ro.unobserve(e.target); } });
+}, { threshold: 0.01, rootMargin: '0px 0px -20px 0px' });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+setTimeout(() => { document.querySelectorAll('.reveal:not(.vis)').forEach(el => el.classList.add('vis')); }, 1500);
+
+// Counters
+const co = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target, t = +el.dataset.target;
+        let c = 0; const inc = t / 60;
+        const timer = setInterval(() => {
+            c += inc;
+            if (c >= t) { el.textContent = t; clearInterval(timer); }
+            else el.textContent = Math.floor(c);
+        }, 25);
+        co.unobserve(el);
+    });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(c => co.observe(c));
+
+// HUD Timecode
+const hudTime = document.getElementById('hudTime');
+const showcaseVideo = document.querySelector('.showcase-frame video');
+if (showcaseVideo && hudTime) {
+    function updateTimecode() {
+        const t = showcaseVideo.currentTime || 0;
+        const h = Math.floor(t / 3600).toString().padStart(2, '0');
+        const m = Math.floor((t % 3600) / 60).toString().padStart(2, '0');
+        const s = Math.floor(t % 60).toString().padStart(2, '0');
+        const f = Math.floor((t % 1) * 60).toString().padStart(2, '0');
+        hudTime.textContent = `${h}:${m}:${s}:${f}`;
+        requestAnimationFrame(updateTimecode);
+    }
+    showcaseVideo.addEventListener('playing', updateTimecode);
+}
+
+// FAQ
+document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+        const item = q.parentElement, wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+    });
+});
+
+// Copy email
+function copyEmail() {
+    navigator.clipboard.writeText('data@peakai.com').then(() => {
+        const box = document.getElementById('emailBox');
+        const orig = box.innerHTML;
+        box.innerHTML = '<span style="color:var(--green)">Copied!</span>';
+        setTimeout(() => box.innerHTML = orig, 2000);
+    });
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const t = document.querySelector(this.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+</script>
+</body>
+</html>

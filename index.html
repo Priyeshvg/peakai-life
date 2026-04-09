@@ -318,12 +318,210 @@
     </div>
 </section>
 
+<div style="padding:40px 0"><div class="dv"></div></div>
+
+<!-- ====================================================== -->
+<!-- THE LANDSCAPE — what labs are working with today         -->
+<!-- ====================================================== -->
+<section class="pad" style="min-height:auto">
+    <div style="max-width:800px;margin:0 auto">
+        <div class="t-big fi" style="margin-bottom:12px;text-align:left">The landscape<br><span class="accent">today.</span></div>
+        <div class="fi" style="font-size:13px;color:rgba(255,255,255,.25);margin-bottom:48px;line-height:1.6;text-align:left;">What the best labs in the world are training on — and why it's still not enough.</div>
+
+        <!-- Dataset comparison table -->
+        <div class="fi" style="overflow-x:auto;margin-bottom:48px">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">
+                <thead>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+                        <th style="text-align:left;padding:12px 16px 12px 0;color:#666;font-weight:600;letter-spacing:.5px;font-size:10px">MODEL / DATASET</th>
+                        <th style="text-align:right;padding:12px 16px;color:#666;font-weight:600;letter-spacing:.5px;font-size:10px">SIZE</th>
+                        <th style="text-align:right;padding:12px 16px;color:#666;font-weight:600;letter-spacing:.5px;font-size:10px">ROBOTS</th>
+                        <th style="text-align:right;padding:12px 0 12px 16px;color:#666;font-weight:600;letter-spacing:.5px;font-size:10px">TASKS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                        <td style="padding:14px 16px 14px 0;font-weight:600">pi0 <span style="color:#555;font-weight:400">(Physical Intelligence)</span></td>
+                        <td style="text-align:right;padding:14px 16px;color:#00ff88;font-family:monospace;font-weight:700">10K+ hrs</td>
+                        <td style="text-align:right;padding:14px 16px;color:#888;font-family:monospace">7</td>
+                        <td style="text-align:right;padding:14px 0 14px 16px;color:#888;font-family:monospace">68</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                        <td style="padding:14px 16px 14px 0;font-weight:600">Open X-Embodiment <span style="color:#555;font-weight:400">(Google DeepMind)</span></td>
+                        <td style="text-align:right;padding:14px 16px;color:#00ff88;font-family:monospace;font-weight:700">1M eps</td>
+                        <td style="text-align:right;padding:14px 16px;color:#888;font-family:monospace">22</td>
+                        <td style="text-align:right;padding:14px 0 14px 16px;color:#888;font-family:monospace">527</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                        <td style="padding:14px 16px 14px 0;font-weight:600">OpenVLA <span style="color:#555;font-weight:400">(Berkeley/Stanford)</span></td>
+                        <td style="text-align:right;padding:14px 16px;color:#00ff88;font-family:monospace;font-weight:700">970K eps</td>
+                        <td style="text-align:right;padding:14px 16px;color:#888;font-family:monospace">22</td>
+                        <td style="text-align:right;padding:14px 0 14px 16px;color:#888;font-family:monospace">527</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                        <td style="padding:14px 16px 14px 0;font-weight:600">DROID <span style="color:#555;font-weight:400">(Stanford/Berkeley/CMU)</span></td>
+                        <td style="text-align:right;padding:14px 16px;color:#ff4444;font-family:monospace;font-weight:700">76K traj</td>
+                        <td style="text-align:right;padding:14px 16px;color:#888;font-family:monospace">1</td>
+                        <td style="text-align:right;padding:14px 0 14px 16px;color:#888;font-family:monospace">84</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                        <td style="padding:14px 16px 14px 0;font-weight:600">BridgeData V2 <span style="color:#555;font-weight:400">(Berkeley)</span></td>
+                        <td style="text-align:right;padding:14px 16px;color:#ff4444;font-family:monospace;font-weight:700">60K traj</td>
+                        <td style="text-align:right;padding:14px 16px;color:#888;font-family:monospace">1</td>
+                        <td style="text-align:right;padding:14px 0 14px 16px;color:#888;font-family:monospace">13</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                        <td style="padding:14px 16px 14px 0;font-weight:600">TRI LBMs <span style="color:#555;font-weight:400">(Toyota Research)</span></td>
+                        <td style="text-align:right;padding:14px 16px;color:#ff4444;font-family:monospace;font-weight:700">1,700 hrs</td>
+                        <td style="text-align:right;padding:14px 16px;color:#888;font-family:monospace">2</td>
+                        <td style="text-align:right;padding:14px 0 14px 16px;color:#888;font-family:monospace">100s</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:14px 16px 14px 0;font-weight:600">Figure Helix <span style="color:#555;font-weight:400">(Figure AI)</span></td>
+                        <td style="text-align:right;padding:14px 16px;color:#ff4444;font-family:monospace;font-weight:700">~500 hrs</td>
+                        <td style="text-align:right;padding:14px 16px;color:#888;font-family:monospace">1</td>
+                        <td style="text-align:right;padding:14px 0 14px 16px;color:#888;font-family:monospace">bimanual</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="fi" style="font-size:13px;color:rgba(255,255,255,.2);line-height:1.7;margin-bottom:48px;text-align:left;">
+            DROID: 50 people, 13 institutions, 12 months for 76K trajectories. OXE: 21 institutions over years for 1M episodes. The largest efforts in robotics history — and still orders of magnitude less than what foundation models need.
+        </div>
+    </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- WHY EGOCENTRIC — technical deep dive                    -->
+<!-- ====================================================== -->
+<section class="pad" style="min-height:auto">
+    <div style="max-width:800px;margin:0 auto">
+        <div class="t-big fi" style="margin-bottom:12px;text-align:left">Why egocentric<br><span class="accent">human demos.</span></div>
+        <div class="fi" style="font-size:13px;color:rgba(255,255,255,.25);margin-bottom:40px;line-height:1.6;text-align:left;">Not teleoperation. Not simulation. Not YouTube.</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.03);border-radius:10px;overflow:hidden;margin-bottom:40px" class="fi">
+            <div style="background:#000;padding:28px 24px">
+                <div style="font-size:11px;font-weight:700;color:#ff4444;letter-spacing:1px;margin-bottom:12px">TELEOPERATION</div>
+                <div style="font-size:22px;font-weight:900;letter-spacing:-1px;margin-bottom:6px">$0.50</div>
+                <div style="font-size:10px;color:#555">per demonstration</div>
+                <div style="font-size:11px;color:#444;margin-top:12px;line-height:1.5">Requires robot present. Unnatural motion. $25-50/hr operator. 30-60 demos/hr. Doesn't scale.</div>
+            </div>
+            <div style="background:#000;padding:28px 24px">
+                <div style="font-size:11px;font-weight:700;color:#00ff88;letter-spacing:1px;margin-bottom:12px">EGOCENTRIC CAPTURE</div>
+                <div style="font-size:22px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;color:#00ff88">&lt;$0.08</div>
+                <div style="font-size:10px;color:#555">per demonstration</div>
+                <div style="font-size:11px;color:#444;margin-top:12px;line-height:1.5">No robot needed. Natural human motion. Any environment. 6x cheaper. Infinite scale.</div>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:40px" class="fi">
+            <div style="background:#080808;border:1px solid rgba(255,255,255,.04);border-radius:10px;padding:24px">
+                <div style="font-size:11px;font-weight:700;color:#ff4444;letter-spacing:1px;margin-bottom:14px">SIMULATION</div>
+                <div style="font-size:12px;color:#555;line-height:1.6">Can't model deformable objects. Fails on contact-rich manipulation. No real friction, texture, or compliance. Even Skild AI — simulation-first — needs real data for post-training.</div>
+            </div>
+            <div style="background:#080808;border:1px solid rgba(255,255,255,.04);border-radius:10px;padding:24px">
+                <div style="font-size:11px;font-weight:700;color:#ff4444;letter-spacing:1px;margin-bottom:14px">INTERNET VIDEO</div>
+                <div style="font-size:12px;color:#555;line-height:1.6">No action labels. No depth. No force data. Wrong viewpoint — optimized for viewers, not robots. No proprioception. Ego-Exo4D proved first-person uniquely encodes intent.</div>
+            </div>
+        </div>
+
+        <div class="fi" style="font-size:13px;color:rgba(255,255,255,.2);line-height:1.7;text-align:left;border-left:2px solid rgba(0,255,136,.2);padding-left:20px;">
+            UMI (Stanford) proved it: human hand demos with a GoPro + 3D-printed gripper transfer directly to robot policies via Diffusion Policy. Dobb-E (NYU) did it with an iPhone — 20 minutes to learn a new task. Egocentric human data is the scalable path.
+        </div>
+    </div>
+</section>
+
+<div style="padding:40px 0"><div class="dv"></div></div>
+
+<!-- ====================================================== -->
+<!-- FORMAT COMPATIBILITY                                    -->
+<!-- ====================================================== -->
+<section class="pad" style="min-height:auto">
+    <div style="max-width:800px;margin:0 auto">
+        <div class="t-big fi" style="margin-bottom:12px;text-align:left">Ship in <span class="accent">your format.</span></div>
+        <div class="fi" style="font-size:13px;color:rgba(255,255,255,.25);margin-bottom:40px;line-height:1.6;text-align:left;">We deliver data compatible with every major framework and training pipeline.</div>
+
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(255,255,255,.03);border-radius:10px;overflow:hidden;margin-bottom:40px" class="fi">
+            <div style="background:#000;padding:24px">
+                <div style="font-family:monospace;font-size:11px;font-weight:700;color:#00ff88;margin-bottom:8px">RLDS</div>
+                <div style="font-size:11px;color:#555;line-height:1.5">TensorFlow Datasets + Apache Arrow. Used by RT-1-X, RT-2-X, Octo.</div>
+            </div>
+            <div style="background:#000;padding:24px">
+                <div style="font-family:monospace;font-size:11px;font-weight:700;color:#00ff88;margin-bottom:8px">LeRobot v3</div>
+                <div style="font-size:11px;color:#555;line-height:1.5">Parquet + MP4 + safetensors. HuggingFace Hub native. Community standard.</div>
+            </div>
+            <div style="background:#000;padding:24px">
+                <div style="font-family:monospace;font-size:11px;font-weight:700;color:#00ff88;margin-bottom:8px">Zarr</div>
+                <div style="font-size:11px;color:#555;line-height:1.5">Chunked arrays. Fast random access. Used by Diffusion Policy, UMI.</div>
+            </div>
+            <div style="background:#000;padding:24px">
+                <div style="font-family:monospace;font-size:11px;font-weight:700;color:#00ff88;margin-bottom:8px">HDF5</div>
+                <div style="font-size:11px;color:#555;line-height:1.5">Hierarchical data. robomimic compatible. Legacy lab standard.</div>
+            </div>
+        </div>
+
+        <div class="fi" style="font-size:12px;color:#444;line-height:1.65;text-align:left;">
+            <span style="color:#888;font-weight:600">Every delivery includes:</span> synchronized multi-camera streams (50-60Hz) &middot; language annotations per episode &middot; 6-DoF pose trajectories &middot; depth maps &middot; instance segmentation masks &middot; success/failure labels &middot; task taxonomy metadata &middot; action chunks compatible with ACT and Diffusion Policy training.
+        </div>
+    </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- WHAT WE KNOW — insights that show domain expertise      -->
+<!-- ====================================================== -->
+<section class="pad" style="min-height:auto">
+    <div style="max-width:800px;margin:0 auto">
+        <div class="t-big fi" style="margin-bottom:40px;text-align:left">What we <span class="accent">know.</span></div>
+
+        <div style="display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,.03);border-radius:10px;overflow:hidden" class="fi">
+            <div style="background:#000;padding:28px 24px;display:flex;gap:20px;align-items:flex-start">
+                <div style="font-family:monospace;font-size:10px;font-weight:700;color:#00ff88;white-space:nowrap;margin-top:3px">01</div>
+                <div>
+                    <div style="font-size:14px;font-weight:700;margin-bottom:6px">Environment diversity matters more than volume.</div>
+                    <div style="font-size:12px;color:#555;line-height:1.6">DROID showed 20% performance boost from distributing collection across 564 scenes vs concentrated collection. pi0.5 expanded to 100+ real homes. Lab-only data fails in deployment.</div>
+                </div>
+            </div>
+            <div style="background:#000;padding:28px 24px;display:flex;gap:20px;align-items:flex-start">
+                <div style="font-family:monospace;font-size:10px;font-weight:700;color:#00ff88;white-space:nowrap;margin-top:3px">02</div>
+                <div>
+                    <div style="font-size:14px;font-weight:700;margin-bottom:6px">Cross-embodiment transfer is real.</div>
+                    <div style="font-size:12px;color:#555;line-height:1.6">RT-2-X outperforms RT-2 by 3x on emergent skills when trained on diverse robot data. OpenVLA's 7B model beats Google's 55B RT-2-X by 16.5% — data diversity trumps parameter count.</div>
+                </div>
+            </div>
+            <div style="background:#000;padding:28px 24px;display:flex;gap:20px;align-items:flex-start">
+                <div style="font-family:monospace;font-size:10px;font-weight:700;color:#00ff88;white-space:nowrap;margin-top:3px">03</div>
+                <div>
+                    <div style="font-size:14px;font-weight:700;margin-bottom:6px">Correction data is the next frontier.</div>
+                    <div style="font-size:12px;color:#555;line-height:1.6">Physical Intelligence's RECAP method combines demos, autonomous rollouts, and expert interventions. More than doubles throughput, halves failure rates. The highest-value data isn't just demonstrations — it's corrections.</div>
+                </div>
+            </div>
+            <div style="background:#000;padding:28px 24px;display:flex;gap:20px;align-items:flex-start">
+                <div style="font-family:monospace;font-size:10px;font-weight:700;color:#00ff88;white-space:nowrap;margin-top:3px">04</div>
+                <div>
+                    <div style="font-size:14px;font-weight:700;margin-bottom:6px">50 demos is the new baseline.</div>
+                    <div style="font-size:12px;color:#555;line-height:1.6">ACT, Diffusion Policy, and Mobile ALOHA all converge on ~50 demonstrations per task for 80-90% success. But foundation models need millions of demos for generalization. The gap between per-task fine-tuning and pre-training is the real challenge.</div>
+                </div>
+            </div>
+            <div style="background:#000;padding:28px 24px;display:flex;gap:20px;align-items:flex-start">
+                <div style="font-family:monospace;font-size:10px;font-weight:700;color:#00ff88;white-space:nowrap;margin-top:3px">05</div>
+                <div>
+                    <div style="font-size:14px;font-weight:700;margin-bottom:6px">The data flywheel determines who wins.</div>
+                    <div style="font-size:12px;color:#555;line-height:1.6">Deployed robots generate training data. Better data makes better robots. Better robots get deployed more. The company that starts this loop first — with the most diverse, real-world data — compounds fastest.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div style="padding:40px 0"><div class="dv"></div></div>
+
 <!-- ====================================================== -->
 <!-- CLOSING                                                 -->
 <!-- ====================================================== -->
 <section class="sec">
     <div style="text-align:center;padding:0 24px">
-        <div class="t-huge fi">$50 trillion in manufacturing.<br><span class="accent">Who owns the data?</span></div>
+        <div class="t-huge fi">$13.8B poured into robotics in 2025.<br><span class="accent">All bottlenecked on data.</span></div>
     </div>
 </section>
 

@@ -130,7 +130,7 @@
     <div class="dot on"></div><div class="dot"></div><div class="dot"></div>
     <div class="dot"></div><div class="dot"></div><div class="dot"></div>
     <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-    <div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
 </div>
 
 <canvas id="evoCanvas"></canvas>
@@ -139,7 +139,7 @@
 <!-- EVOLUTION: 8 eras across 800vh scroll                   -->
 <!-- Particles morph. Colors shift. Text transitions.        -->
 <!-- ====================================================== -->
-<div id="evoWrap" style="height:1200vh">
+<div id="evoWrap" style="height:1500vh">
     <div id="evoSticky">
         <div id="evoVideo">
             <video muted loop playsinline poster="poster.jpg">
@@ -385,6 +385,8 @@ const eras = [
     { label:'3,500 BC', title:'The Wheel.', stat:'Rotation. Leverage. Transport.\nPhysics harnessed by human design.', color:[200,180,120], bg:[15,12,6] },
     { label:'1760', title:'Industry.', stat:'Steam. Assembly lines. Mass production.\nMachines amplified human labor 100x.', color:[180,180,200], bg:[10,10,14] },
     { label:'1970', title:'Digital.', stat:'Computers. Internet. Software ate the world.\nAI mastered language, vision, reasoning.', color:[80,140,255], bg:[3,6,20] },
+    { label:'2022', title:'ChatGPT.', stat:'685 million hours of text consumed.\nThe entire internet, processed.\nLanguage AI changed everything.', color:[255,255,255], bg:[8,8,12] },
+    { label:'BUT', title:'Robots can\'t\nlearn from text.', stat:'You can\'t read how to pick up a cup.\nYou can\'t Google how to fold a shirt.\nPhysical skills need physical data.', color:[255,160,40], bg:[15,8,2] },
     { label:'NOW', title:'Physical AI.', stat:'AI moves from bits to atoms.\nRobots that see, reason, and manipulate.\n$124B market by 2030.', color:[0,255,136], bg:[0,8,4] },
     { label:'THE BOTTLENECK', title:'Data.', stat:'Language AI: 685M hours of training data.\nRobotics: ~10,000 hours.\n120,000x gap.', color:[255,50,50], bg:[18,2,2] },
     { label:'', title:'PeakAI.', stat:'The data layer for physical AI.', color:[0,255,136], bg:[0,0,0] },
@@ -582,6 +584,66 @@ function tick(){
             pt.size = lerp(pt.size, 1.5+Math.random(), .05);
 
         } else if(ei===7){
+            // CHATGPT — massive text vortex. Particles form horizontal lines (text),
+            // then spiral inward toward a bright center. Data being consumed.
+            const lineCount = 15;
+            const lineIdx = i % lineCount;
+            const lineY = (lineIdx + .5) / lineCount * H;
+            const progress = (i / N);
+            // Particles start as text lines, then spiral inward
+            const spiralT = Math.min(1, et * 2); // intensifies within era
+            const spiralAngle = time * (1 + progress * 2) + i * 0.3;
+            const spiralR = M * (.4 - .35 * spiralT) * (1 - progress * .5);
+            const lineX = (progress * W * .8 + W * .1) + Math.sin(time * 2 + i) * 10;
+            // Blend from lines to spiral
+            const tx = lerp(lineX, W/2 + Math.cos(spiralAngle) * spiralR, spiralT);
+            const ty = lerp(lineY, H/2 + Math.sin(spiralAngle) * spiralR, spiralT);
+            pt.vx += (tx - pt.x) * .008; pt.vy += (ty - pt.y) * .008;
+            pt.vx *= .92; pt.vy *= .92;
+            pt.size = lerp(pt.size, 1.5 + (1-spiralR/(M*.4)) * 2, .05);
+            // Center glow sparks — data being consumed
+            if(sparkTimer % .06 < .02 && i < 6) {
+                const sa = Math.random() * Math.PI * 2;
+                const sr = M * .02;
+                emitSparks(W/2 + Math.cos(sa)*sr, H/2 + Math.sin(sa)*sr, 2, 3, 1.5, 20, [255,255,255]);
+            }
+            // Outer data stream sparks flowing inward
+            if(sparkTimer % .1 < .02 && i < 4) {
+                const edge = Math.random() > .5 ? 0 : W;
+                const ey = Math.random() * H;
+                emitSparks(edge, ey, 1, 5, 3, 40, [150,180,255]);
+            }
+
+        } else if(ei===8){
+            // ROBOTS CAN'T READ — text particles shatter/scatter, chaotic.
+            // Lines try to form but break apart. Particles jitter and reject.
+            const chaos = .5 + et * .5;
+            const jitterX = (Math.random() - .5) * 8 * chaos;
+            const jitterY = (Math.random() - .5) * 8 * chaos;
+            // Try to form a hand shape but fail — scatter outward
+            const handAngle = (i / N) * Math.PI * 2;
+            const handR = M * .2;
+            const targetX = W/2 + Math.cos(handAngle) * handR;
+            const targetY = H/2 + Math.sin(handAngle) * handR;
+            // Push AWAY from target (rejection)
+            const dx = pt.x - targetX, dy = pt.y - targetY;
+            const dist = Math.sqrt(dx*dx + dy*dy) + 1;
+            if(dist < M * .25) {
+                pt.vx += (dx / dist) * 1.5 * chaos;
+                pt.vy += (dy / dist) * 1.5 * chaos;
+            }
+            pt.vx += jitterX; pt.vy += jitterY;
+            pt.vx *= .9; pt.vy *= .9;
+            // Contain within screen
+            if(pt.x < 0) pt.vx += 2; if(pt.x > W) pt.vx -= 2;
+            if(pt.y < 0) pt.vy += 2; if(pt.y > H) pt.vy -= 2;
+            pt.size = lerp(pt.size, 1 + Math.random() * 2, .05);
+            // Error sparks — red flashes of failure
+            if(sparkTimer % .08 < .02 && i < 4) {
+                emitSparks(W/2 + (Math.random()-.5)*M*.4, H/2 + (Math.random()-.5)*M*.4, 2, 15, 4, 18, [255,120,40]);
+            }
+
+        } else if(ei===9){
             // PHYSICAL AI — neural network, data pulses along connections
             const nc = 8;
             const ni = i % nc;
@@ -589,30 +651,26 @@ function tick(){
             const nr = M*.25;
             let tx, ty;
             if(i < N*.15) {
-                // Core cluster — pulsing
                 const cr = 20 + Math.sin(time*2)*8;
                 tx = W/2 + Math.cos(time*.3+i*2.5)*cr;
                 ty = H/2 + Math.sin(time*.3+i*2.5)*cr;
             } else if(i < N*.3) {
-                // Inner ring
                 const ir = nr * .5;
                 tx = W/2 + Math.cos(na*2+time*.2)*ir + Math.sin(time+i)*5;
                 ty = H/2 + Math.sin(na*2+time*.2)*ir + Math.cos(time+i)*5;
             } else {
-                // Outer ring
                 tx = W/2 + Math.cos(na)*nr + Math.sin(time*1.5+i)*10;
                 ty = H/2 + Math.sin(na)*nr + Math.cos(time*1.5+i)*10;
             }
             pt.vx += (tx-pt.x)*.005; pt.vy += (ty-pt.y)*.005;
             pt.vx *= .93; pt.vy *= .93;
             pt.size = lerp(pt.size, 2+Math.sin(time*3+i)*.8, .04);
-            // Data pulse sparks
             if(sparkTimer % .2 < .02 && i < 3) {
                 const sa = Math.random()*Math.PI*2;
                 emitSparks(W/2+Math.cos(sa)*nr*.5, H/2+Math.sin(sa)*nr*.5, 2, 5, 2, 25, [0,255,136]);
             }
 
-        } else if(ei===8){
+        } else if(ei===10){
             // BOTTLENECK — everything crushes to center, pulses red, suffocating
             const pulse = Math.sin(time*4)*.3+.7;
             const cr = 25*pulse;
@@ -621,7 +679,6 @@ function tick(){
             pt.vx += (tx-pt.x)*.01; pt.vy += (ty-pt.y)*.01;
             pt.vx *= .9; pt.vy *= .9;
             pt.size = lerp(pt.size, 2.5*pulse, .05);
-            // Stressed sparks trying to escape
             if(sparkTimer % .1 < .02 && i < 5) {
                 emitSparks(W/2, H/2, 3, 10, 5, 15, [255,80,80]);
             }
@@ -691,8 +748,8 @@ function tick(){
     }
 
     // ===== CONNECTIONS =====
-    const maxD = [0,50,0,0,50,60,0,100,20,50][ei];
-    const cA =   [0,.03,0,0,.03,.04,0,.08,.03,.03][ei];
+    const maxD = [0,50,0,0,50,60,0,60,0,100,20,50][ei];
+    const cA =   [0,.03,0,0,.03,.04,0,.05,0,.08,.03,.03][ei];
     if(maxD>0){
         ctx.lineWidth=.5;
         for(let i=0;i<N;i+=2) for(let j=i+1;j<N;j+=2){
@@ -729,13 +786,64 @@ function tick(){
         for(let i=0;i<25;i++){ const x=(i+.5)/25*W; ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
     }
 
-    // Physical AI — orbit rings
+    // ChatGPT — center glow (data singularity), spiral lines
     if(ei===7){
+        // Bright center glow — the "brain" consuming all data
+        const glowR = M * (.05 + Math.sin(time*2)*.02);
+        const grad = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,glowR*4);
+        grad.addColorStop(0,`rgba(255,255,255,.15)`);
+        grad.addColorStop(.3,`rgba(200,220,255,.05)`);
+        grad.addColorStop(1,'transparent');
+        ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+        // Inner bright core
+        ctx.beginPath(); ctx.arc(W/2,H/2,glowR,0,Math.PI*2);
+        ctx.fillStyle='rgba(255,255,255,.1)'; ctx.fill();
+        // Spiral data streams flowing inward
+        ctx.strokeStyle='rgba(200,220,255,.04)'; ctx.lineWidth=1;
+        for(let s=0;s<6;s++){
+            ctx.beginPath();
+            for(let t2=0;t2<50;t2++){
+                const a = (s/6)*Math.PI*2 + t2*.15 + time*.3;
+                const r2 = M*(.35 - t2*.006);
+                const x = W/2 + Math.cos(a)*r2;
+                const y = H/2 + Math.sin(a)*r2;
+                t2===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+            }
+            ctx.stroke();
+        }
+        // Faint text-like horizontal lines
+        ctx.strokeStyle='rgba(255,255,255,.015)'; ctx.lineWidth=.5;
+        for(let l=0;l<20;l++){
+            const ly = (l+.5)/20*H;
+            const lw = W*(.2+Math.random()*.4);
+            const lx = W*(.1+Math.random()*.3);
+            ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx+lw,ly);ctx.stroke();
+        }
+    }
+
+    // Robots can't read — warning flashes, broken grid
+    if(ei===8){
+        // Flickering error overlay
+        if(Math.random()>.92){
+            ctx.fillStyle=`rgba(255,100,20,.03)`;
+            ctx.fillRect(0,0,W,H);
+        }
+        // Broken grid lines
+        ctx.strokeStyle='rgba(255,120,40,.03)'; ctx.lineWidth=.5;
+        for(let l=0;l<8;l++){
+            const y = Math.random()*H;
+            const x1 = Math.random()*W*.3;
+            const x2 = x1 + Math.random()*W*.3;
+            ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(x2,y);ctx.stroke();
+        }
+    }
+
+    // Physical AI — orbit rings
+    if(ei===9){
         ctx.strokeStyle='rgba(0,255,136,.04)'; ctx.lineWidth=.5;
         [.125,.25,.375].forEach(r=>{
             ctx.beginPath(); ctx.arc(W/2,H/2,M*r,0,Math.PI*2); ctx.stroke();
         });
-        // Data pulse lines from center to nodes
         ctx.strokeStyle='rgba(0,255,136,.06)'; ctx.lineWidth=1;
         for(let i=0;i<8;i++){
             const a=(i/8)*Math.PI*2+time*.08;
@@ -745,7 +853,7 @@ function tick(){
     }
 
     // Bottleneck — pulsing red vignette
-    if(ei===8){
+    if(ei===10){
         const pulse = Math.sin(time*4)*.5+.5;
         const grad = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,M*.5);
         grad.addColorStop(0,'transparent');
@@ -764,17 +872,18 @@ function tick(){
             eraTitle.classList.add('show');
             if(era.label)eraLabel.classList.add('show');
             if(era.stat)eraStat.classList.add('show');
-            if(ei===8) eraTitle.style.color='#ff4444';
-            else if(ei>=7) eraTitle.style.color='#00ff88';
+            if(ei===10) eraTitle.style.color='#ff4444';
+            else if(ei===8) eraTitle.style.color='#ff9920';
+            else if(ei>=9) eraTitle.style.color='#00ff88';
+            else if(ei===11) eraTitle.style.color='#00ff88';
             else eraTitle.style.color='#fff';
-            if(ei===9) eraTitle.style.color='#00ff88';
         },250);
         dotEls.forEach((d,i)=>d.classList.toggle('on',i===ei));
-        if(ei>=8){evoVideo.classList.add('show');evoVid.play();}
+        if(ei>=10){evoVideo.classList.add('show');evoVid.play();}
         else evoVideo.classList.remove('show');
     }
 
-    if(ei>=8){ evoOverlay.style.background='radial-gradient(ellipse at center,rgba(0,0,0,.4)0%,rgba(0,0,0,.85)70%)'; }
+    if(ei>=10){ evoOverlay.style.background='radial-gradient(ellipse at center,rgba(0,0,0,.4)0%,rgba(0,0,0,.85)70%)'; }
     else { evoOverlay.style.background='none'; }
 
     dotsWrap.classList.toggle('show', rect.top<=0 && rect.bottom>innerHeight);

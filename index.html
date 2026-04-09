@@ -168,8 +168,8 @@
         <div class="fi" style="max-width:700px;margin:0 auto 56px">
             <div style="margin-bottom:32px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-                    <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,.5)">Language AI</span>
-                    <span style="font-family:monospace;font-size:clamp(20px,3vw,32px);font-weight:900;color:#fff"><span class="ctr" data-t="685">0</span>M hours</span>
+                    <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,.5)">Language AI training data</span>
+                    <span style="font-family:monospace;font-size:clamp(20px,3vw,32px);font-weight:900;color:#fff">15T+ tokens</span>
                 </div>
                 <div style="width:100%;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden">
                     <div id="barLang" style="width:0;height:100%;background:rgba(255,255,255,.3);border-radius:3px;transition:width 2s cubic-bezier(.16,1,.3,1)"></div>
@@ -177,15 +177,15 @@
             </div>
             <div>
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-                    <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,.5)">Robotics</span>
-                    <span style="font-family:monospace;font-size:clamp(20px,3vw,32px);font-weight:900;color:#ff4444"><span class="ctr" data-t="10">0</span>K hours</span>
+                    <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,.5)">Largest robotics dataset</span>
+                    <span style="font-family:monospace;font-size:clamp(20px,3vw,32px);font-weight:900;color:#ff4444">1M episodes</span>
                 </div>
                 <div style="width:100%;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden">
                     <div id="barRobo" style="width:0;height:100%;background:#ff4444;border-radius:3px;transition:width 2s cubic-bezier(.16,1,.3,1) .3s"></div>
                 </div>
             </div>
             <div style="margin-top:16px;text-align:right">
-                <span style="font-family:monospace;font-size:12px;color:rgba(255,255,255,.2)">120,000x gap</span>
+                <span style="font-family:monospace;font-size:12px;color:rgba(255,255,255,.2)">Open X-Embodiment — 22 robots, 21 institutions, years to build</span>
             </div>
         </div>
 
@@ -208,9 +208,9 @@
         <!-- Bottom line -->
         <div class="fi" style="margin-top:48px">
             <div style="font-size:clamp(13px,1.5vw,16px);color:rgba(255,255,255,.25);line-height:1.7;max-width:460px;margin:0 auto">
-                Foundation models need <span style="color:#fff;font-weight:700">millions of demonstrations</span>.<br>
-                The largest robotics dataset has 1M episodes — collected by<br>
-                <span style="color:#fff;font-weight:700">21 institutions over years</span>. That's not how you scale.
+                pi0 needed <span style="color:#fff;font-weight:700">10,000+ hours across 68 tasks</span>.<br>
+                DROID took <span style="color:#fff;font-weight:700">50 people, 12 months, 76K trajectories</span>.<br>
+                Foundation models need orders of magnitude more.
             </div>
         </div>
     </div>
@@ -386,10 +386,10 @@ const eras = [
     { label:'3,500 BC', title:'The Wheel.', stat:'Rotation. Leverage. Transport.\nPhysics harnessed by human design.', color:[200,180,120], bg:[15,12,6] },
     { label:'1760', title:'Industry.', stat:'Steam. Assembly lines. Mass production.\nMachines amplified human labor 100x.', color:[180,180,200], bg:[10,10,14] },
     { label:'1970', title:'Digital.', stat:'Computers. Internet. Software ate the world.\nAI mastered language, vision, reasoning.', color:[80,140,255], bg:[3,6,20] },
-    { label:'2020s', title:'Foundation\nModels.', stat:'GPT. Claude. Gemini. Llama.\n685 million hours of text consumed.\nLanguage, code, reasoning — solved.', color:[255,255,255], bg:[8,8,12] },
+    { label:'2020s', title:'Foundation\nModels.', stat:'GPT. Claude. Gemini. Llama.\nTrillions of tokens consumed.\nLanguage, code, reasoning — solved.', color:[255,255,255], bg:[8,8,12] },
     { label:'BUT', title:'Models can\'t\nlearn to grasp.', stat:'No language model can pick up a cup.\nNo vision model can fold a shirt.\nPhysical intelligence needs physical data.', color:[255,160,40], bg:[15,8,2] },
     { label:'NOW', title:'Physical AI.', stat:'AI moves from bits to atoms.\nRobots that see, reason, and manipulate.\n$124B market by 2030.', color:[0,255,136], bg:[0,8,4] },
-    { label:'THE BOTTLENECK', title:'Data.', stat:'Language AI: 685M hours of training data.\nRobotics: ~10,000 hours.\n120,000x gap.', color:[255,50,50], bg:[18,2,2] },
+    { label:'THE BOTTLENECK', title:'Data.', stat:'Foundation models trained on trillions of tokens.\nThe largest robotics dataset: 1M episodes.\nCollected by 21 institutions over years.', color:[255,50,50], bg:[18,2,2] },
     { label:'', title:'PeakAI.', stat:'The data layer for physical AI.', color:[0,255,136], bg:[0,0,0] },
 ];
 
